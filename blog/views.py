@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from .serializers import BlogPostSerializer, CategorySerializer
+from .serializers import BlogPostSerializer, CategorySerializer, TagSerializer
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from .models import Category, BlogPost
+from .models import Category, BlogPost, Tag
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
@@ -10,6 +10,7 @@ from rest_framework.generics import RetrieveAPIView, ListAPIView, UpdateAPIView,
 from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from django.db.models import Q
 
 
 
@@ -29,7 +30,15 @@ class CreatePostView(CreateAPIView):
             except Category.DoesNotExist:
                 raise ValidationError({'message': 'Category does not exist.'})
 
-        serializer.save(author=self.request.user)
+        blog_post = serializer.save(author=self.request.user)
+
+        tags_data = self.request.data.get('tags', [])
+        if tags_data:
+            for tag_name in tags_data:
+                tag, created = Tag.objects.get_or_create(name=tag_name)
+                blog_post.tags.add(tag)
+
+        blog_post.save()
 
 
 
@@ -37,7 +46,6 @@ class PostDetailView(RetrieveAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = BlogPost.objects.all()
     serializer_class = BlogPostSerializer
-    lookup_field = 'uid'
 
 
 
@@ -53,8 +61,6 @@ class PostListView(ListAPIView):
     pagination_class = BlogPostPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['category_id', 'author_id']
-    search_fields = ['author__username', 'content', 'category__name']
-
 
 
     def get_queryset(self):
@@ -62,6 +68,8 @@ class PostListView(ListAPIView):
         if order == 'desc':
             return BlogPost.objects.all().order_by('-created_date')
         return BlogPost.objects.all().order_by('created_date')
+    
+    
 
 
 
@@ -69,14 +77,12 @@ class PostUpdateView(UpdateAPIView):
     queryset = BlogPost.objects.all()
     serializer_class = BlogPostSerializer
     permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
-    lookup_field = "uid"
 
 
 
 class PostDeleteView(DestroyAPIView):
     queryset = BlogPost.objects.all()
     permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
-    lookup_field = "uid"
 
 
 
@@ -84,3 +90,49 @@ class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
+
+class PostByCategoryView(ListAPIView):
+    queryset = BlogPost.objects.all()
+    serializer_class = BlogPostSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        category_id = self.kwargs['pk']  # Get category ID from the URL
+        return BlogPost.objects.filter(category__id=category_id)
+    
+
+class PostByAuthorView(ListAPIView):
+    queryset = BlogPost.objects.all()
+    serializer_class = BlogPostSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        author_id = self.kwargs['pk']  # Get author ID from the URL
+        return BlogPost.objects.filter(author__id=author_id)
+    
+
+
+class BlogPostSearchView(ListAPIView):
+    serializer_class = BlogPostSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = BlogPost.objects.all()  # Start with all blog posts
+        search_query = self.request.query_params.get('search', None)  # Get the search query
+
+        if search_query:
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) |
+                Q(content__icontains=search_query) |
+                Q(tags__name__icontains=search_query) |
+                Q(author__username__icontains=search_query)
+            ).distinct()  # Use distinct to avoid duplicates
+
+        return queryset

@@ -11,10 +11,16 @@ class Category(models.Model):
     
     def __str__(self):
         return self.name
+    
+
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
 
 
 class BaseModel(models.Model):
-    uid = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     created_date = models.DateTimeField(auto_now_add=True)
     published_date = models.DateTimeField(null=True, blank=True)
 
@@ -30,7 +36,7 @@ class BlogPost(BaseModel):
         Category, on_delete=models.CASCADE, related_name="posts",
         null=True, blank=True
     )
-    tags = TaggableManager()
+    tags = models.ManyToManyField(Tag, related_name='blog_posts', blank=True)
 
     def __str__(self):
         return self.title
