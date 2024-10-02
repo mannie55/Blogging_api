@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
+from django.contrib.auth.password_validation import validate_password
 
 CustomUser = get_user_model()
 
@@ -14,15 +15,22 @@ class RegistrationSerializer(serializers.ModelSerializer):
         }
 
     
-    def create(self, validated_data):
-        password = validated_data.pop('password')
-        confirm_password = validated_data.pop('confirm_password')
+    def validate(self, data):
+        password = data.get('password')
+        confirm_password = data.get('confirm_password')
 
         if password != confirm_password:
             raise serializers.ValidationError({'password': 'Passwords must match.'})
 
+        # Validate password strength
+        validate_password(password)
+
+        return data
+
+    def create(self, validated_data):
+        validated_data.pop('confirm_password')
         user = CustomUser(**validated_data)
-        user.set_password(password)
+        user.set_password(validated_data['password'])  # Hash the password
         user.save()
         return user
 

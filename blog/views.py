@@ -3,6 +3,7 @@ from .serializers import BlogPostSerializer, CategorySerializer
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from .models import Category, BlogPost
 from rest_framework import viewsets, status
+from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from .permissions import IsAuthorOrReadOnly
 from rest_framework.generics import RetrieveAPIView, ListAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView
@@ -31,6 +32,7 @@ class CreatePostView(CreateAPIView):
         serializer.save(author=self.request.user)
 
 
+
 class PostDetailView(RetrieveAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = BlogPost.objects.all()
@@ -38,11 +40,12 @@ class PostDetailView(RetrieveAPIView):
     lookup_field = 'uid'
 
 
+
+
 class BlogPostPagination(PageNumberPagination):
     page_size = 5
     page_size_query_param = 'page_size'
     max_page_size = 100  # Limit maximum page size
-
 
 class PostListView(ListAPIView):
     serializer_class = BlogPostSerializer
@@ -51,13 +54,16 @@ class PostListView(ListAPIView):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['category_id', 'author_id']
     search_fields = ['author__username', 'content', 'category__name']
-    
+
+
 
     def get_queryset(self):
         order = self.request.query_params.get('order', 'asc')
         if order == 'desc':
             return BlogPost.objects.all().order_by('-created_date')
         return BlogPost.objects.all().order_by('created_date')
+
+
 
 class PostUpdateView(UpdateAPIView):
     queryset = BlogPost.objects.all()
@@ -66,10 +72,13 @@ class PostUpdateView(UpdateAPIView):
     lookup_field = "uid"
 
 
+
 class PostDeleteView(DestroyAPIView):
     queryset = BlogPost.objects.all()
     permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
     lookup_field = "uid"
+
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]

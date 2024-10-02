@@ -19,11 +19,11 @@ class BlogPostSerializer(TaggitSerializer, serializers.ModelSerializer):
   """
   slugrelated field to ensure api call returns author username instead of primarykey
   """
-  author = serializers.SlugRelatedField(slug_field='username', queryset=User.objects.all())
+  # author = serializers.SlugRelatedField(slug_field='username', queryset=User.objects.all())
 
   # tags = TagListSerializerField()
 
   class Meta:
     model = BlogPost
-    fields = '__all__'
+    fields = ['uid', 'title', 'content', 'author', 'category']
     read_only_fields = ['author']
