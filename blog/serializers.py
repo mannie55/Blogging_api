@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import BlogPost, Category, Tag
 from django.contrib.auth import get_user_model
-from taggit.serializers import TagListSerializerField, TaggitSerializer
+
 
 User = get_user_model()
 
@@ -19,7 +19,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 
-class BlogPostSerializer(TaggitSerializer, serializers.ModelSerializer):
+class BlogPostSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = BlogPost

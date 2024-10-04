@@ -25,15 +25,27 @@ SECRET_KEY = 'django-insecure-f+0k284xkw)^bkz6#)!mwg9qh((-z2o$3^!^nkh72so9dp)ywz
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
+
+
 ALLOWED_HOSTS = []
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+# Prevent content from being loaded in iframes to avoid clickjacking
+X_FRAME_OPTIONS = 'DENY'
+
+# Block content-sniffing attacks
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+
+
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django_extensions',
+    'drf_yasg',
     'django_filters',
-    'taggit',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'blog.apps.BlogConfig',
