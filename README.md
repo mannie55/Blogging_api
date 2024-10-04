@@ -31,7 +31,7 @@ Ensure you have the following installed:
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/yourusername/blog-api.git
+    git clone https://github.com/yourusername/Blogging_api.git
     ```
 
 2. Navigate to the project directory:
