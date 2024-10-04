@@ -28,7 +28,7 @@ DEBUG = True
 
 
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["https://blogging-api-5eu4.onrender.com"]
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 # Prevent content from being loaded in iframes to avoid clickjacking
@@ -36,6 +36,11 @@ X_FRAME_OPTIONS = 'DENY'
 
 # Block content-sniffing attacks
 SECURE_CONTENT_TYPE_NOSNIFF = True
+
+import os
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 
