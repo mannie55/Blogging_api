@@ -104,7 +104,7 @@ class PostByCategoryView(ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        category_id = self.kwargs['pk']  # Get category ID from the URL
+        category_id = self.kwargs.get['id']  # Get category ID from the URL
         return BlogPost.objects.filter(category__id=category_id)
     
 
@@ -114,7 +114,7 @@ class PostByAuthorView(ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        author_id = self.kwargs['pk']  # Get author ID from the URL
+        author_id = self.kwargs['id']  # Get author ID from the URL
         return BlogPost.objects.filter(author__id=author_id)
     
 

@@ -28,7 +28,7 @@ DEBUG = True
 
 
 
-ALLOWED_HOSTS = ['https://blogging-api-5eu4.onrender.com']
+ALLOWED_HOSTS = ['blogging-api-5eu4.onrender.com', '127.0.0.1']
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 # Prevent content from being loaded in iframes to avoid clickjacking
