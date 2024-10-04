@@ -28,7 +28,7 @@ DEBUG = True
 
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 # Prevent content from being loaded in iframes to avoid clickjacking
