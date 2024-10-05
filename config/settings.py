@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,15 +21,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-f+0k284xkw)^bkz6#)!mwg9qh((-z2o$3^!^nkh72so9dp)ywz'
-
+SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 
 
 
-ALLOWED_HOSTS = ['blogging-api-5eu4.onrender.com', '127.0.0.1']
+ALLOWED_HOSTS = ['blog-api.onrender.com', '127.0.0.1']
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 # Prevent content from being loaded in iframes to avoid clickjacking
@@ -87,6 +87,7 @@ SIMPLE_JWT = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -162,6 +163,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+if not DEBUG:
+  STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+  STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticfilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
