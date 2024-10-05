@@ -28,7 +28,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 
 
-ALLOWED_HOSTS = ['blog-api.onrender.com', '127.0.0.1']
+ALLOWED_HOSTS = ['blog-api-b3t1.onrender.com', '127.0.0.1']
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 # Prevent content from being loaded in iframes to avoid clickjacking
