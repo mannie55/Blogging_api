@@ -9,12 +9,14 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'bio', 'birthdate', 'password', 'confirm_password']
+        fields = ['first_name', 'last_name', 'username', 'password', 'confirm_password']
         extra_kwargs = {
-            'password': {'write_only': True}
+            'password': {'write_only': True},
+            'first_name': {'required': False},
+            'last_name': {'required': False},
         }
 
-    
+
     def validate(self, data):
         password = data.get('password')
         confirm_password = data.get('confirm_password')
@@ -27,12 +29,19 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
         return data
 
+
     def create(self, validated_data):
         validated_data.pop('confirm_password')
+        """
+        Here we unpacked the validated_data dictionary and 
+        converted them into keyword arguments
+        """
         user = CustomUser(**validated_data)
         user.set_password(validated_data['password'])  # Hash the password
         user.save()
         return user
+
+
 
 
 class LoginSerializer(serializers.Serializer):
@@ -55,13 +64,13 @@ class LoginSerializer(serializers.Serializer):
         return data
 
 
-class UserSerializer(serializers.ModelSerializer):
+
+
+class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'bio', 'birthdate']
+        fields = ['username', 'first_name', 'last_name', 'email', 'bio', 'birthdate']
         extra_kwargs = {
-            'username': {'read_only':True},
-            'email': {'read_only':True},
-            'birthdate': {'read_only':True},
+            'username': {'read_only':True}
         }

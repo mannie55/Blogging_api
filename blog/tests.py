@@ -140,3 +140,4 @@ class TestViews(TestSetup):
         response = self.client.get(reverse('post-search'), {'search': 'admin'})  # Assuming 'admin' is the username
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.post.title, [post['title'] for post in response.data])  # Check if the post by admin is included
+
