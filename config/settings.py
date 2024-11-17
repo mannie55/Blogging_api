@@ -49,6 +49,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Application definition
 
 INSTALLED_APPS = [
+    'comment.apps.CommentConfig',
     'drf_yasg',
     'django_filters',
     'rest_framework',

@@ -1,50 +1,36 @@
-"""
-URL configuration for config project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-
-
-
-"""
+# URL configuration for the config project.
 
 from django.contrib import admin
 from django.urls import path, include
 
+# Importing for API documentation generation
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
 
-
+# Set up the schema view for API documentation
 schema_view = get_schema_view(
     openapi.Info(
-        title="Blog API",
-        default_version='v1',
-        description="Blog API documentation",
-        contact=openapi.Contact(email="mannnie55@gmail.com"),
-        license=openapi.License(name="BSD License"),
+        title="Blog API",  # Title for the API
+        default_version='v1',  # Version of the API
+        description="Blog API documentation",  # Description of what the API does
+        contact=openapi.Contact(email="mannnie55@gmail.com"),  # Contact email for the API
+        license=openapi.License(name="BSD License"),  # API license info
     ),
-    public=True,
-    permission_classes=(permissions.AllowAny,)
+    public=True,  # Makes the schema public
+    permission_classes=(permissions.AllowAny,)  # Allows any user to access the documentation
 )
 
-
-
-
 urlpatterns = [
-    path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path("api/users/", include("users.urls")),
-    path("api/blog/", include("blog.urls")),
-    path("admin/", admin.site.urls),
+    # API Documentation
+    path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),  # Swagger UI for API docs
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),  # ReDoc UI for API docs
+
+    # API Endpoints
+    path("api/users/", include("users.urls")),  # Include URLs from the 'users' app
+    path("api/blog/", include("blog.urls")),  # Include URLs from the 'blog' app
+    path("api/comment/", include("comment.urls")),  # Include URLs from the 'comment' app
+
+    # Admin Interface
+    path("admin/", admin.site.urls),  # Django admin interface
 ]

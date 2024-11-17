@@ -3,6 +3,8 @@ from django.urls import reverse
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from .models import BlogPost, Category, Tag
+from rest_framework import status
+
 
 User = get_user_model()
 
@@ -13,6 +15,7 @@ class TestSetup(APITestCase):
         self.post_create_url = reverse('post-create')
         self.post_update_url_template = 'post-update'
         self.post_delete_url_template = 'post-delete'
+
         self.valid_post_data = {
             "title": "title",
             "content": "this is the content",
@@ -29,8 +32,6 @@ class TestSetup(APITestCase):
             "password": "Index11#",
             "confirm_password": "Index11#"
         }
-
-        self.post = BlogPost.objects.create(**self.valid_post_data, author=self.user)
 
         return super().setUp()
   
@@ -140,4 +141,3 @@ class TestViews(TestSetup):
         response = self.client.get(reverse('post-search'), {'search': 'admin'})  # Assuming 'admin' is the username
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.post.title, [post['title'] for post in response.data])  # Check if the post by admin is included
-
